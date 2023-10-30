@@ -12,24 +12,27 @@ app.use(express.static(__dirname + '/views/'));
 
 //custom middleware
 app.use((req, res, next) => {
-
     console.log(req.headers);
     let token = null;
-
     if(req.headers.authorization){
         token = req.headers.authorization.split(' ');
     }
-
     console.log(token);
-
     if(token && token[0] === 'Bearer'){
         // verify token is valid
+        jwt.verify(token[1], process.env.JWT_SECRET, (err, decoded) => {
+            if(err){
+                req.user = undefined;
+            }
+            req.user = decoded;
+            next();
+        });
     }
     else {
         console.log("No token");
+        req.user = undefined;  //<------ this line
     }
-
-    next();
+    next(); //<------ this line
 });
 ///
 

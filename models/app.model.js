@@ -5,7 +5,27 @@ const appSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    developer: {
+    size_bytes: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: String,
+        required: true
+    },
+    rating_count_tot: {
+        type: Number,
+        required: true
+    },
+    user_rating: {
+        type: Number,
+        required: true
+    },
+    ver: {
+        type: String,
+        required: true
+    },
+    cont_rating: {
         type: String,
         required: true
     },
@@ -13,26 +33,6 @@ const appSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    price: {
-        type: Number,
-        required: true
-    },
-    rating: {
-        type: Number,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    reviews: {
-        type: [{
-            user: String,
-            rating: Number,
-            comment: String
-        }],
-        required: true
-    }
 });
 
 module.exports = mongoose.model('App', appSchema);

@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
     full_name: {
@@ -18,7 +19,11 @@ const userSchema = new Schema({
         required: true,
         min:6
 
-    }
+    },
+    categories: [{ 
+        type: Schema.Types.ObjectId,
+        ref: 'Users' 
+    }]
 }, {timestamps: true});
 
 //model method

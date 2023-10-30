@@ -1,122 +1,128 @@
-const App = require('../models/app.model');
+const App = require('../models/app.model')
+
 
 const readData = (req, res) => {
 
+
     App.find({})
     .then((data) => {
-        console.log(data);
+        
 
-        if(data.length > 0){
-            res.status(200).json(data);
-        }
-        else{
-            res.status(404).json('No apps found');
-        }
+        data ? res.status(200).json(data) 
+        :
+        res.status(404).json('none found') 
     })
     .catch(err => {
-        console.error(err);
-        res.status(500).json(err);
-    });
+        console.error(`Error ${err}`)
+        res.status(500).json(err)
+    })
+
+
 };
 
 const readOne = (req, res) => {
-
-    let id = req.params.id;
     
-    App.findById(id)
-    .then(data => {
+    let id = req.params.id;
 
-        if(!data){
-            res.status(404).json({ msg: `App ${id} not found!`});
-        }
-            
-        res.status(200).json(data);
-        
+
+
+    App.findById(id)        
+    .then(data => {
+        !data ? res.status(404).json({msg: `app ${id} not found`}) 
+        :
+         res.status(200).json(data)
     })
     .catch(err => {
-        if(err.name === 'CastError'){
-            res.status(404).json({ msg: `App ${id} not found!`});
-        }
-        else{
-            console.error(err);
-            res.status(500).json(err);
-        }  
-    });
+        //Check for cast Error
+        err.name == 'CastError'
+        ? res.status(404).json({msg: `App ${id} not found`})
+        : res.status(500).json(err)
 
+        console.error(`Error ${err}`)
+       
+    })
+
+    
 };
+
 
 const createData = (req, res) => {
+    
+   inputData = req.body;
 
-    console.log(req.body);
-    let inputData = req.body;
+   App.create(inputData)
+   .then(data => {
+        console.log(`New Fesival created`, data)
+        res.status(201).json(data)
+   })
+   .catch(err => {
+    console.log(err)
+    err.name == "ValidationError"  ? res.status(422).json.error : res.status(500).json
+    
+    
+   })
+   
 
-    App.create(inputData)
-    .then(data => {
-        console.log(`New App Created`, data);
-        res.status(201).json(data);
-    })
-    .catch(err => {
-        if(err.name === 'ValidationError'){
-            res.status(422).json(err);
-        }
-        else {
-            console.error(err);
-            res.status(500).json(err);
-        }
-    });
 };
 
-const updateData = (req, res) => {
 
+const updateData = (req, res) => {
+    
     let id = req.params.id;
+
     let data = req.body;
 
     App.findByIdAndUpdate(id, data, {
-        new: true,
+        new: true
     })
     .then(newData => {
-        res.status(201).json(newData);
+        res.status(201).json({
+            msg: `You Updated App ${id}`,
+            data: newData
+        })
     })
     .catch(err => {
-        if(err.name === 'ValidationError'){
-            res.status(422).json(err);
-        }
-        else if(err.name === 'CastError'){
-            res.status(404).json({ msg: `App ${id} not found!`});
-        }
-        else {
-            console.error(err);
-            res.status(500).json(err);
-        }
-    });
+         //Check for cast Error
+         err.name == 'CastError'
+         ? res.status(404).json({msg: `App ${id} not found`})
+         : res.status(500).json(err)
+ 
+         console.error(`Error ${err}`)
+    })
+
+
+
 
 };
 
-const deleteData = (req, res) => {
 
+const deleteData = (req, res) => {
+    
     let id = req.params.id;
 
     App.findByIdAndDelete(id)
-    .then(data => {
+    .then(newData => {
 
-        if(!data){
-            res.status(404).json({ msg: `App ${id} not found!`});
-        }
-
-        res.status(200).json({msg: `App ${id} deleted!`});
+        !newData ? res.status(404).json({msg: `App ${id} not found`}) 
+        :
+        res.status(200).json({
+            msg: `You deleted App ${id}`,
+            data: newData
+        })
     })
     .catch(err => {
-        if(err.name === 'CastError'){
-            res.status(404).json({ msg: `App ${id} not found!`});
-        }
-        else {
-            console.error(err);
-            res.status(500).json(err);
-        }
-    });
+         //Check for cast Error
+         err.name == 'CastError'
+         ? res.status(404).json({msg: `App ${id} not found`})
+         : res.status(500).json(err)
+ 
+         console.error(`Error ${err}`)
+    })
+
+    
 };
 
-module.exports = {
+module.exports ={
     readData,
     readOne,
     createData,

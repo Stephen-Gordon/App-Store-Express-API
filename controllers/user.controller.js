@@ -31,10 +31,10 @@ const login = (req, res) => {
     .then(user => {
         //password match
         console.log('Found ', user)
-        let token;
+        let token = null;
 
         //if user password is wrong
-        !user.comparePassword(req.body.password) ? res.status(401).json({
+        !user || !user.comparePassword(req.body.password) ? res.status(401).json({
             msg: 'Authentication failed, username or password is wrong'
         })
         ://successful
