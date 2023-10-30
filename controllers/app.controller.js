@@ -5,8 +5,9 @@ const readData = (req, res) => {
 
 
     App.find({})
+    .populate('reviews')
     .then((data) => {
-        
+        console.log(data)
 
         data ? res.status(200).json(data) 
         :

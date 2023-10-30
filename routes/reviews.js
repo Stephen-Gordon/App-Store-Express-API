@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { profile, register, login } = require('../controllers/user.controller')
 
 //import your routes from the controller
+const { readData, createData } = require('../controllers/review.controller')
+
 //export them to the server
 
 router
-    .get('/:id', profile)
-    .post('/register', register)
-    .post('/login', login)
+    .get('/', readData)
+    .post('/', createData)
     
-
 module.exports = router;

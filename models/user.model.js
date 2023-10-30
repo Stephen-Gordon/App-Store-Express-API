@@ -20,10 +20,14 @@ const userSchema = new Schema({
         min:6
 
     },
-    categories: [{ 
+    appsDownloaded: [{ 
         type: Schema.Types.ObjectId,
-        ref: 'Users' 
-    }]
+        ref: 'App' 
+    }],
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }],
 }, {timestamps: true});
 
 //model method

@@ -70,6 +70,29 @@ const loginRequired = (req, res, next) => {
 
 const profile = (req, res) => {
     
+    let id = req.params.id;
+
+
+
+    User.findById(id)        
+    .then(data => {
+        !data ? 
+        res.status(404).json({msg: `user ${id} not found`}) 
+        :
+        data.password = undefined 
+
+        res.status(200).json(data)
+    })
+    .catch(err => {
+        //Check for cast Error
+        err.name == 'CastError'
+        ? res.status(404).json({msg: `App ${id} not found`})
+        : res.status(500).json(err)
+
+        console.error(`Error ${err}`)
+       
+    })
+
 }
 
 module.exports ={
