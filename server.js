@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const jwt = require('jsonwebtoken')
 
 require('dotenv').config();
 require('./configs/db.js')();
@@ -30,9 +31,12 @@ app.use((req, res, next) => {
     }
     else {
         console.log("No token");
+        res.status(401).json({
+            msg: 'Must be logged in to continue'
+        });
         req.user = undefined;  //<------ this line
     }
-    next(); //<------ this line
+   
 });
 ///
 
