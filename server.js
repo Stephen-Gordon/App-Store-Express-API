@@ -33,10 +33,9 @@ app.use((req, res, next) => {
         console.log("No token");
         res.status(401).json({
             msg: 'Must be logged in to continue'
-        });
-        req.user = undefined;  //<------ this line
+        })
+        req.user = undefined; 
     }
-   
 });
 ///
 
