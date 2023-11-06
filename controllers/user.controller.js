@@ -7,7 +7,6 @@ const register = (req, res) => {
     let newUser = new User(req.body)
     newUser.password = bcrypt.hashSync(req.body.password, 10)
     
-    //Validate
  
     // Promise
     newUser.save()
@@ -72,9 +71,10 @@ const profile = (req, res) => {
     
     let id = req.params.id;
 
-
-
-    User.findById(id)        
+    User.findById(id)       
+    .populate({ path: 'appsDownloaded', select: '_id name' })
+    .populate({ path: 'reviews', select: '_id content' })
+    
     .then(data => {
         !data ? 
         res.status(404).json({msg: `user ${id} not found`}) 

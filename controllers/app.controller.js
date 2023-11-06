@@ -1,13 +1,19 @@
 const App = require('../models/app.model')
-
+const User = require('../models/user.model')
 
 const readData = (req, res) => {
 
 
     App.find({})
-    .populate('reviews')
+    //.populate(['reviews', 'users'])
+    .populate({
+        path: 'users',
+        select: 'full_name email id'
+      })
+      .populate({
+        path: 'reviews',
+      })
     .then((data) => {
-        console.log(data)
 
         data ? res.status(200).json(data) 
         :
@@ -28,6 +34,13 @@ const readOne = (req, res) => {
 
 
     App.findById(id)        
+    .populate({
+        path: 'users',
+        select: '-password -createdAt -updatedAt'
+      })
+      .populate({
+        path: 'reviews',
+      })
     .then(data => {
         !data ? res.status(404).json({msg: `app ${id} not found`}) 
         :
@@ -66,34 +79,35 @@ const createData = (req, res) => {
 
 };
 
-
 const updateData = (req, res) => {
-    
     let id = req.params.id;
-
     let data = req.body;
+    // need to check for duplicated when adding to appsDownloaded array
+    App.findByIdAndUpdate(id, data, { new: true })
+        .then(newData => {
+            let userId = newData.users;
 
-    App.findByIdAndUpdate(id, data, {
-        new: true
-    })
-    .then(newData => {
-        res.status(201).json({
-            msg: `You Updated App ${id}`,
-            data: newData
+            User.findByIdAndUpdate(userId, { $addToSet: { appsDownloaded: newData._id } }, { new: true })
+                .then(updatedUser => {
+                    res.status(201).json({
+                        msg: `You Updated App ${id}`,
+                        data: newData,
+                    });
+                })
+                .catch(err => {
+                    console.error(`Error updating user: ${err}`);
+                    res.status(500).json(err);
+                });
         })
-    })
-    .catch(err => {
-         //Check for cast Error
-         err.name == 'CastError'
-         ? res.status(404).json({msg: `App ${id} not found`})
-         : res.status(500).json(err)
- 
-         console.error(`Error ${err}`)
-    })
-
-
-
-
+        .catch(err => {
+            // Check for cast Error
+            if (err.name === 'CastError') {
+                res.status(404).json({ msg: `App ${id} not found` });
+            } else {
+                console.error(`Error updating app: ${err}`);
+                res.status(500).json(err);
+            }
+        });
 };
 
 
