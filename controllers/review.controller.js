@@ -27,6 +27,19 @@ const createData = async (req, res) => {
         const appId = req.body.app;
         const userId = req.body.user;
 
+        // check if the user and app exist in the db
+        // https://www.educative.io/answers/what-is-exists-in-mongoose
+        const userExists = await User.exists({ _id: userId });
+        const appExists = await App.exists({ _id: appId });
+
+        // if theres no user or app with the ids then return 404
+        if (!userExists || !appExists) {
+            res.status(404).json({ msg: "User or App not found" });
+            return;
+        }
+
+        // if they exist then continue 
+
         // create a new review
         const review = await Review.create(inputData);
 

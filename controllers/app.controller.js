@@ -87,7 +87,7 @@ const updateData = (req, res) => {
         .then(newData => {
             let userId = newData.users;
 
-            User.findByIdAndUpdate(userId, { $addToSet: { appsDownloaded: newData._id } }, { new: true })
+            User.findByIdAndUpdate(userId, { $push: { appsDownloaded: newData._id } }, { new: true })
                 .then(updatedUser => {
                     res.status(201).json({
                         msg: `You Updated App ${id}`,
@@ -126,15 +126,25 @@ const deleteData = async (req, res) => {
             return; 
         }
 
-        //await User.updateMany({ appsDownloaded: id }, { $pullAll: { appsDownloaded: [id] } });
-
-        // find all users who have the app downloaded
+       /*  // find all users who have the app downloaded
         const users = await User.find({ appsDownloaded: id });
 
         // loop through the users and delete each app from their appsDownloaded array
         for (const user of users) {
             await User.findByIdAndUpdate(user._id, { $pull: { appsDownloaded: id } });
         }
+ */
+
+        const reviewsToDeleteArray = deleteApp.reviews;
+
+        for (const review of reviewsToDeleteArray) {
+            await User.findByIdAndUpdate(user._id, { $pull: { reviews: review } });
+        }
+
+        await User.updateOne({ _id: 1 }, { $pull: { reviews: { $each: reviewsToDeleteArray } } })
+        
+        await User.updateMany({ appsDownloaded: id }, { $pull: { appsDownloaded: id } });
+        
 
         // Delete all the app's reviews
         await Review.deleteMany({ app: id });
