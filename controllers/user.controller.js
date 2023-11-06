@@ -42,6 +42,7 @@ const login = (req, res) => {
             email: user.email,
             full_name: user.full_name,
             _id: user._id 
+            //role
         } , process.env.JWT_SECRET)
 
         res.status(200).json({

@@ -1,6 +1,6 @@
 const App = require('../models/app.model')
 const User = require('../models/user.model')
-
+const Review = require('../models/review.model')
 const readData = (req, res) => {
 
 
@@ -111,31 +111,50 @@ const updateData = (req, res) => {
 };
 
 
-const deleteData = (req, res) => {
-    
-    let id = req.params.id;
+const deleteData = async (req, res) => {
+    try {
 
-    App.findByIdAndDelete(id)
-    .then(newData => {
+        //app id
+        const id = req.params.id;
 
-        !newData ? res.status(404).json({msg: `App ${id} not found`}) 
-        :
+        // first delete the app
+        const deleteApp = await App.findByIdAndDelete(id);
+
+        // if the app doesnt exist throw an error
+        if (!deleteApp) {
+            res.status(404).json({ msg: `App ${id} not found` });
+            return; 
+        }
+
+        //await User.updateMany({ appsDownloaded: id }, { $pullAll: { appsDownloaded: [id] } });
+
+        // find all users who have the app downloaded
+        const users = await User.find({ appsDownloaded: id });
+
+        // loop through the users and delete each app from their appsDownloaded array
+        for (const user of users) {
+            await User.findByIdAndUpdate(user._id, { $pull: { appsDownloaded: id } });
+        }
+
+        // Delete all the app's reviews
+        await Review.deleteMany({ app: id });
+
         res.status(200).json({
             msg: `You deleted App ${id}`,
-            data: newData
-        })
-    })
-    .catch(err => {
-         //Check for cast Error
-         err.name == 'CastError'
-         ? res.status(404).json({msg: `App ${id} not found`})
-         : res.status(500).json(err)
- 
-         console.error(`Error ${err}`)
-    })
+            data: deleteApp
+        });
+    } catch (err) {
+        if (err.name === 'CastError') {
+            res.status(404).json({ msg: `App ${id} not found` });
+        } else {
+            res.status(500).json(err);
+        }
 
-    
+        console.error(`Error ${err}`);
+    }
 };
+
+
 
 module.exports ={
     readData,

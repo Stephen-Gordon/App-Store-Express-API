@@ -36,6 +36,8 @@ app.use((req, res, next) => {
             msg: 'Must be logged in to continue'
         })
         req.user = undefined;
+        //next();
+
     }
 });
 ///

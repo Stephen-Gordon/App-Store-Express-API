@@ -5,6 +5,7 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    
     app: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'App'

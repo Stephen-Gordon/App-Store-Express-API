@@ -1,23 +1,22 @@
 const Review = require('../models/review.model')
 const App = require('../models/app.model')
 const User = require('../models/user.model')
-const readData = (req, res) => {
 
 
-    Review.find({})
-    .then((data) => {
-        
+const readData = async (req, res) => {
 
-        data ? res.status(200).json(data) 
-        :
-        res.status(404).json('none found') 
-    })
-    .catch(err => {
+    try {
+
+      const data = await Review.find({})
+
+      data ? res.status(200).json(data) 
+      :
+      res.status(404).json('No Review found') 
+
+    } catch (err) {
         console.error(`Error ${err}`)
         res.status(500).json(err)
-    })
-
-
+    }
 };
 
  //https://www.mongodb.com/docs/manual/reference/operator/update/push/
@@ -49,6 +48,7 @@ const createData = async (req, res) => {
 
 const deleteData = async (req, res) => {
   try {
+    
     const id = req.params.id;
 
     // delete review from reviews collection
@@ -61,6 +61,7 @@ const deleteData = async (req, res) => {
     // https://stackoverflow.com/questions/54992810/update-many-in-mongoose
     // updateMany(filter, update, options)
     // filter must be an object
+    
     await App.updateMany({reviews: id}, { $pull: { reviews: id } }, { new: true });
     await User.updateMany({reviews: id} , { $pull: { reviews: id } }, { new: true });
 
