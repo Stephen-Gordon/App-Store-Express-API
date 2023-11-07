@@ -126,23 +126,19 @@ const deleteData = async (req, res) => {
             return; 
         }
 
-       /*  // find all users who have the app downloaded
-        const users = await User.find({ appsDownloaded: id });
-
-        // loop through the users and delete each app from their appsDownloaded array
-        for (const user of users) {
-            await User.findByIdAndUpdate(user._id, { $pull: { appsDownloaded: id } });
-        }
- */
-
+       
+        // map through the users and delete each review related to the app
         const reviewsToDeleteArray = deleteApp.reviews;
 
-        for (const review of reviewsToDeleteArray) {
-            await User.findByIdAndUpdate(user._id, { $pull: { reviews: review } });
-        }
+        // updateMany(filter, update, options)
+        await Promise.all(
+            reviewsToDeleteArray.map(async (reviewId) => {
+              await User.updateMany({ reviews: reviewId }, { $pull: { reviews: reviewId } });
+            })
+          );
 
-        await User.updateOne({ _id: 1 }, { $pull: { reviews: { $each: reviewsToDeleteArray } } })
-        
+
+        // Delete the app from all users who have it downloaded
         await User.updateMany({ appsDownloaded: id }, { $pull: { appsDownloaded: id } });
         
 
