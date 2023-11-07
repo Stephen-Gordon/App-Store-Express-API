@@ -5,7 +5,12 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    
+    rating: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 5
+    },
     app: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'App'

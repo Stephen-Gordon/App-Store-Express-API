@@ -13,11 +13,7 @@ const appSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    rating_count_tot: {
-        type: Number,
-        required: true
-    },
-    user_rating: {
+    averageRating: {
         type: Number,
         required: true
     },

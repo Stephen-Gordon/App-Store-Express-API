@@ -1,61 +1,89 @@
 const App = require('../models/app.model')
 const User = require('../models/user.model')
 const Review = require('../models/review.model')
-const readData = (req, res) => {
+const readData = async (req, res) => {
+    try {
+
+        const data = await App.find({})
+        .populate({
+            path: 'users',
+            select: 'full_name email _id'
+          })
+          .populate({
+            path: 'reviews',
+            select: '_id content rating user'
+          })
+
+          //loop through all apps, and its reviews
+          // calculate the average rating and add it to the app
+          let apps = data.map((app) => {
+            let reviews = app.reviews
+            let total = 0
+            reviews.forEach((review) => {
+                total = total + review.rating
+            })
+            app.averageRating = total/reviews.length
+            return app
+          })
+
+          // return the apps array
+          data ? res.status(200).json(apps) 
+          :
+          res.status(404).json('none found') 
 
 
-    App.find({})
-    //.populate(['reviews', 'users'])
-    .populate({
-        path: 'users',
-        select: 'full_name email id'
-      })
-      .populate({
-        path: 'reviews',
-      })
-    .then((data) => {
-
-        data ? res.status(200).json(data) 
-        :
-        res.status(404).json('none found') 
-    })
-    .catch(err => {
+    } catch (err){
         console.error(`Error ${err}`)
         res.status(500).json(err)
-    })
+    }
+
+    
+    
+    
 
 
 };
 
-const readOne = (req, res) => {
+const readOne = async (req, res) => {
     
-    let id = req.params.id;
+    try {
 
+        let id = req.params.id;
 
+        const data = await App.findById(id)        
+        .populate({
+            path: 'users',
+            select: '-password -createdAt -updatedAt'
+        })
+        .populate({
+            path: 'reviews',
+            select: '_id content rating user',
+        })
 
-    App.findById(id)        
-    .populate({
-        path: 'users',
-        select: '-password -createdAt -updatedAt'
-      })
-      .populate({
-        path: 'reviews',
-      })
-    .then(data => {
-        !data ? res.status(404).json({msg: `app ${id} not found`}) 
-        :
-         res.status(200).json(data)
-    })
-    .catch(err => {
+          // calculate the average rating and add it to the app
+        console.log(data)
+
+        let reviews = data.reviews
+        let total = 0
+        reviews.forEach((review) => {
+            total = total + review.rating
+        })
+
+        data.averageRating = total / reviews.length
+        data.averageRating = data.averageRating.toFixed(1)
+
+        !data ? res.status(404).json({ msg: `app ${id} not found` })
+            :
+            res.status(200).json(data)
+
+    } catch (err) {
         //Check for cast Error
         err.name == 'CastError'
         ? res.status(404).json({msg: `App ${id} not found`})
         : res.status(500).json(err)
 
         console.error(`Error ${err}`)
-       
-    })
-
+    }
     
 };
 
@@ -133,6 +161,7 @@ const deleteData = async (req, res) => {
         // updateMany(filter, update, options)
         await Promise.all(
             reviewsToDeleteArray.map(async (reviewId) => {
+                // pull the review by id from the users reviews array
               await User.updateMany({ reviews: reviewId }, { $pull: { reviews: reviewId } });
             })
           );
