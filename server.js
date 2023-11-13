@@ -10,6 +10,7 @@ app.use(express.json());
 app.set('view engine', 'html');
 
 app.use(express.static(__dirname + '/views/'));
+app.use(express.static(__dirname + '/public/'));
 
 
 app.use('/api/users', require('./routes/users'));

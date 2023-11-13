@@ -63,7 +63,9 @@ const readOne = async (req, res) => {
           // calculate the average rating and add it to the app
         console.log(data)
 
+        if(data.reviews > 0){
         let reviews = data.reviews
+
         let total = 0
         reviews.forEach((review) => {
             total = total + review.rating
@@ -71,6 +73,8 @@ const readOne = async (req, res) => {
 
         data.averageRating = total / reviews.length
         data.averageRating = data.averageRating.toFixed(1)
+        }
+        
 
         !data ? res.status(404).json({ msg: `app ${id} not found` })
             :
@@ -92,6 +96,12 @@ const createData = (req, res) => {
     
    inputData = req.body;
 
+   // Check for image
+   console.log("file", req.file)
+    if(req.file){
+        inputData.image_path = req.file.filename;
+    }
+
    App.create(inputData)
    .then(data => {
         console.log(`New Fesival created`, data)
@@ -110,6 +120,12 @@ const createData = (req, res) => {
 const updateData = (req, res) => {
     let id = req.params.id;
     let data = req.body;
+
+    if(req.file){
+        body.image_path = req.file.filename
+    }
+    // finish update a photo
+
     // need to check for duplicated when adding to appsDownloaded array
     App.findByIdAndUpdate(id, data, { new: true })
         .then(newData => {

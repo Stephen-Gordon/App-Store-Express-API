@@ -14,8 +14,7 @@ const appSchema = new mongoose.Schema({
         required: true
     },
     averageRating: {
-        type: Number,
-        required: true
+        type: Number
     },
     ver: {
         type: String,
@@ -23,7 +22,6 @@ const appSchema = new mongoose.Schema({
     },
     cont_rating: {
         type: String,
-        required: true
     },
     category: {
         type: String,
@@ -37,6 +35,9 @@ const appSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    image_path: {
+        type: String
+    },
 });
 
 module.exports = mongoose.model('App', appSchema);
