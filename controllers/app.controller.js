@@ -1,6 +1,8 @@
 const App = require('../models/app.model')
 const User = require('../models/user.model')
 const Review = require('../models/review.model')
+const fs = require('fs');
+
 const readData = async (req, res) => {
     try {
 
@@ -117,42 +119,67 @@ const createData = (req, res) => {
 
 };
 
-const updateData = (req, res) => {
-    let id = req.params.id;
-    let data = req.body;
 
-    if(req.file){
-        body.image_path = req.file.filename
-    }
-    // finish update a photo
 
-    // need to check for duplicated when adding to appsDownloaded array
-    App.findByIdAndUpdate(id, data, { new: true })
-        .then(newData => {
-            let userId = newData.users;
-
-            User.findByIdAndUpdate(userId, { $push: { appsDownloaded: newData._id } }, { new: true })
-                .then(updatedUser => {
-                    res.status(201).json({
-                        msg: `You Updated App ${id}`,
-                        data: newData,
-                    });
-                })
-                .catch(err => {
-                    console.error(`Error updating user: ${err}`);
-                    res.status(500).json(err);
-                });
+const deleteImage = (filename) => {
+    let path = `public/uploads/${filename}`
+    fs.access(path, fs.constants.F_OK, (err) => {
+        err ? console.log(err) : 
+        fs.unlink(path, (err) => {
+            if(err) throw err;
+            console.log(`${filename} was deleted`)
+            
         })
-        .catch(err => {
-            // Check for cast Error
-            if (err.name === 'CastError') {
-                res.status(404).json({ msg: `App ${id} not found` });
-            } else {
-                console.error(`Error updating app: ${err}`);
-                res.status(500).json(err);
-            }
+    })
+}
+
+
+const updateData = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let data = req.body;
+
+
+        // check if theres a new image
+        if (req.file) {
+            data.image_path = req.file.filename;
+
+            // get the old app
+            const oldData = await App.findById(id);
+            // delete its old image if it exists
+            if (oldData.image_path) {
+                deleteImage(oldData.image_path)
+            } 
+        }
+
+        // update the app with new data
+        const newData = await App.findByIdAndUpdate(id, data, { new: true });
+
+
+        // update the users appsDownloaded
+        newData.users.forEach(async (user) => {
+            const updatedUser = await User.findByIdAndUpdate(
+                user,
+                { $push: { appsDownloaded: id } },
+                { new: true }
+            );
+        })
+
+        res.status(201).json({
+            msg: `You Updated App ${id}`,
+            data: newData,
         });
+    } catch (err) {
+        // Check for cast Error
+        if (err.name === 'CastError') {
+            res.status(404).json({ msg: `App ${id} not found` });
+        } else {
+            console.error(`Error updating app: ${err}`);
+            res.status(500).json(err);
+        }
+    }
 };
+
 
 
 const deleteData = async (req, res) => {
@@ -163,6 +190,9 @@ const deleteData = async (req, res) => {
 
         // first delete the app
         const deleteApp = await App.findByIdAndDelete(id);
+        
+        // Delete Image
+        deleteImage(deleteApp.image_path)
 
         // if the app doesnt exist throw an error
         if (!deleteApp) {
