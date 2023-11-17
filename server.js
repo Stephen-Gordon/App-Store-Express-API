@@ -35,7 +35,24 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:3000",
+          url: "http://localhost:3000/api",
+        },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            in: 'header',
+            name: 'Authorization',
+            description: 'Bearer token to access these api endpoints',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
         },
       ],
     },

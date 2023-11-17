@@ -45,7 +45,7 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  * 
  *       example:
  *         name: Pay anyone anywhere
- *         size_bytes: Alexander K. Dewdney
+ *         size_bytes: 200000
  *         price: false
  *         ver: 1.0
  *         cont_rating: 4
@@ -58,6 +58,8 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  * tags:
  *   name: Apps
  *   description: All App endpoints
+ * security:
+ *    - BearerAuth: []
  * /apps:
  *   get:
  *     summary: Lists all the apps
@@ -71,26 +73,6 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/App'
- * /apps/{id}:
- *   get:
- *     summary: Get the app by id
- *     tags: [Apps]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The app id
- *     responses:
- *       200:
- *         description: The app response by id
- *         contens:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/App'
- *       404:
- *         description: The app was not found
  *   post:
  *     summary: Create a new App
  *     tags: [Apps]
@@ -109,6 +91,27 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *               $ref: '#/components/schemas/App'
  *       500:
  *         description: Some server error
+ * 
+ * /apps/{id}:
+ *   get:
+ *     summary: Get the app by id
+ *     tags: [Apps]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The app id
+ *     responses:
+ *       200:
+ *         description: The app response by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/App'
+ *       404:
+ *         description: The app was not found
  *   put:
  *    summary: Update the app by the id
  *    tags: [Apps]
@@ -156,7 +159,7 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
 
 router
     .get('/', readData)
-    .get('/:id', loginRequired, readOne)
+    .get('/:id', readOne)
     .post('/', imageUpload.single('image'), createData)
     .put('/:id', imageUpload.single('image'), updateData)
     .delete('/:id', deleteData)

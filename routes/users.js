@@ -102,6 +102,7 @@ const { profile, register, login } = require('../controllers/user.controller')
  *         description: The user was deleted
  *       404:
  *         description: The user was not found
+ * 
  */
 
 router
