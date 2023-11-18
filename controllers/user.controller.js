@@ -50,6 +50,8 @@ const login = async (req, res) => {
             msg: 'Login successful',
             token: token
         });
+
+
     } catch (err) {
         return res.status(400).json({
             msg: err

@@ -38,7 +38,7 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:3000/api",
+          url: "https://express-app-store-api-6f6c8ec32640.herokuapp.com/api",
         },
       ],
       components: {
@@ -88,6 +88,7 @@ app.use((req, res, next) => {
             req.user = decoded;
             next();
         });
+        
     }
     else {
         res.status(401).json({
