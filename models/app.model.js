@@ -6,26 +6,22 @@ const appSchema = new mongoose.Schema({
         required: true
     },
     size_bytes: {
-        type: String,
-        required: true
+        type: String
     },
     price: {
         type: String,
-        required: true
     },
     averageRating: {
         type: Number
     },
     ver: {
-        type: String,
-        required: true
+        type: String
     },
     cont_rating: {
         type: String,
     },
     category: {
-        type: String,
-        required: true
+        type: String
     },
     reviews: [{
         type: mongoose.Schema.Types.ObjectId,
