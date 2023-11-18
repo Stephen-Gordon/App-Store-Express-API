@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+
+const host = '0.0.0.0';
+const port = process.env.PORT || 3000;
+
 const jwt = require('jsonwebtoken')
 bodyParser = require("body-parser"),
 swaggerJsdoc = require("swagger-jsdoc"),
@@ -102,6 +105,6 @@ app.use('/api/apps', require('./routes/apps'));
 app.use('/api/reviews', require('./routes/reviews'));
 
 
-app.listen(process.env.PORT || port, () => {
-    console.log(`Example app listening on port ${port || process.env.PORT}`);
+app.listen(port, host, () => {
+    console.log(`Example app listening on port ${port}`);
 });
