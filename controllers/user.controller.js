@@ -100,8 +100,16 @@ const deleteData = async (req, res) => {
     try {
         
         const id = req.params.id
+
+        // get user id
+        const user = req.user
+        
+        
+        
+        
         // Delete user by id
         deleteUser = await User.findByIdAndDelete(id)
+        
 
 
         if (!deleteUser) {
