@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+
 const imageUpload = require('../configs/imageUpload');
 
 //Auth
+const { checkRole } = require('../middleware/roleMiddleware')
 const { loginRequired } = require('../controllers/user.controller')
 
 const { readData, readOne, createData, updateData, deleteData } = require('../controllers/app.controller')
@@ -160,6 +162,8 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
 router
     .get('/', readData)
     .get('/:id', readOne)
+
+router.use(checkRole('admin'))
     .post('/', imageUpload.single('image'), createData)
     .put('/:id', imageUpload.single('image'), updateData)
     .delete('/:id', deleteData)

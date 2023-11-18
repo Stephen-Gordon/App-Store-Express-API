@@ -5,3 +5,10 @@
 ## create a faker script 
 
 ## add get user profile to swagger 
+
+
+## Only admin can update and delete apps
+
+## Only a user or can delete their own review
+
+## 

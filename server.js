@@ -4,6 +4,7 @@ const app = express();
 const host = '0.0.0.0';
 const port = process.env.PORT || 3000;
 
+
 const jwt = require('jsonwebtoken')
 bodyParser = require("body-parser"),
 swaggerJsdoc = require("swagger-jsdoc"),
@@ -17,6 +18,8 @@ app.set('view engine', 'html');
 
 app.use(express.static(__dirname + '/views/'));
 app.use(express.static(__dirname + '/public/'));
+
+
 
 const options = {
     definition: {
@@ -38,7 +41,7 @@ const options = {
       },
       servers: [
         {
-          url: "https://express-app-store-api-6f6c8ec32640.herokuapp.com/api",
+          url: "http://localhost:3000/api",
         },
       ],
       components: {
