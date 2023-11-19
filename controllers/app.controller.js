@@ -46,7 +46,7 @@ const readOne = async (req, res) => {
 		const data = await App.findById(id)
 			.populate({
 				path: "users",
-				select: "-password -createdAt -updatedAt",
+				select: "-password -createdAt -updatedAt -appsDownloaded -role",
 			})
 			.populate({
 				path: "reviews",
@@ -58,9 +58,8 @@ const readOne = async (req, res) => {
 		}
 
 		// calculate the average rating and add it to the app
-		console.log(data);
 
-		if (data.reviews > 0) {
+		if (data.reviews.length > 0) {
 			let reviews = data.reviews;
 
 			let total = 0;
@@ -71,6 +70,7 @@ const readOne = async (req, res) => {
 			data.averageRating = total / reviews.length;
 			data.averageRating = data.averageRating.toFixed(1);
 		}
+		console.log(data.averageRating);
 
 		!data
 			? res.status(404).json({ msg: `app ${id} not found` })

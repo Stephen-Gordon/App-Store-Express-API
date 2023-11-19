@@ -102,7 +102,26 @@ module.exports = router;
  *       404:
  *         description: User registration failed
  * /users/{id}:
- *   delete:
+ *   get:  # <-- Use the 'get' HTTP method for retrieving a user by id
+ *     summary: Get user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: The user was retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ *   delete:  # <-- Use the 'delete' HTTP method for removing a user by id
  *     summary: Remove the user by id
  *     tags: [Users]
  *     parameters:
@@ -117,5 +136,4 @@ module.exports = router;
  *         description: The user was deleted
  *       404:
  *         description: The user was not found
- *
  */
