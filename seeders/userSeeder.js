@@ -15,9 +15,7 @@ const mongoose = require("mongoose");
 // userSeeder
 const userSeeder = async () => {
 	try {
-		await mongoose.connect(
-			"mongodb+srv://stephengordon48:ovgG7i6MBFXKMoHe@cluster0.lksxmbv.mongodb.net/appstore?retryWrites=true&w=majority"
-		);
+		await mongoose.connect(process.env.DB_ATLAS_URL);
 		console.log("connected to db");
 
 		const apps = await App.find({});
