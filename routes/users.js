@@ -1,11 +1,25 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const { profile, register, login } = require('../controllers/user.controller')
+const {
+	profile,
+	register,
+	login,
+	deleteData,
+} = require("../controllers/user.controller");
 
 //import your routes from the controller
 //export them to the server
 
+router
+	.get("/:id", profile)
+	.post("/register", register)
+	.post("/login", login)
+	.delete("/:id", deleteData);
+
+module.exports = router;
+
+// docs
 /**
  * @swagger
  * components:
@@ -36,7 +50,7 @@ const { profile, register, login } = require('../controllers/user.controller')
  *           items:
  *             type: string
  *             description: Review ids
- * 
+ *
  *       example:
  *         full_name: Joe Bloggs
  *         email: bloggs@gmail.com
@@ -87,7 +101,26 @@ const { profile, register, login } = require('../controllers/user.controller')
  *       404:
  *         description: User registration failed
  * /users/{id}:
- *   delete:
+ *   get:  # <-- Use the 'get' HTTP method for retrieving a user by id
+ *     summary: Get user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: The user was retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ *   delete:  # <-- Use the 'delete' HTTP method for removing a user by id
  *     summary: Remove the user by id
  *     tags: [Users]
  *     parameters:
@@ -102,13 +135,4 @@ const { profile, register, login } = require('../controllers/user.controller')
  *         description: The user was deleted
  *       404:
  *         description: The user was not found
- * 
  */
-
-router
-    .get('/:id', profile)
-    .post('/register', register)
-    .post('/login', login)
-    
-
-module.exports = router;

@@ -19,6 +19,11 @@ const userSchema = new Schema({
         required: true,
         min:6
     },
+    role: {
+        type: String,
+        default: 'user',
+        required: true
+    },
     appsDownloaded: [{ 
         type: Schema.Types.ObjectId,
         ref: 'App' 
@@ -27,6 +32,7 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review'
     }],
+    
 }, {timestamps: true});
 
 //model method

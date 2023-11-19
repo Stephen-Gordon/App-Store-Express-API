@@ -1,19 +1,31 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const imageUpload = require('../configs/imageUpload');
+const imageUpload = require("../configs/imageUpload");
 
-//Auth
-const { loginRequired } = require('../controllers/user.controller')
+// Middleware
+const { checkRole } = require("../middleware/checkRole");
+const { loginRequired } = require("../middleware/loginRequired");
 
-const { readData, readOne, createData, updateData, deleteData } = require('../controllers/app.controller')
+const {
+	readData,
+	readOne,
+	createData,
+	updateData,
+	deleteData,
+} = require("../controllers/app.controller");
 
-//import your routes from the controller
-//export them to the server
+router.get("/", readData).get("/:id", readOne);
 
-// Docs 
-// https://blog.logrocket.com/documenting-express-js-api-swagger/#connect-swagger-node-js
+router
+	.use(checkRole, loginRequired)
+	.post("/", imageUpload.single("image"), createData)
+	.put("/:id", imageUpload.single("image"), updateData)
+	.delete("/:id", deleteData);
 
+module.exports = router;
+
+// docs
 /**
  * @swagger
  * components:
@@ -41,8 +53,8 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *         category:
  *           type: string
  *           description: Category of the App
- * 
- * 
+ *
+ *
  *       example:
  *         name: Pay anyone anywhere
  *         size_bytes: 200000
@@ -50,7 +62,7 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *         ver: 1.0
  *         cont_rating: 4
  *         category: Gaming
- *          
+ *
  */
 
 /**
@@ -91,7 +103,7 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *               $ref: '#/components/schemas/App'
  *       500:
  *         description: Some server error
- * 
+ *
  * /apps/{id}:
  *   get:
  *     summary: Get the app by id
@@ -156,13 +168,3 @@ const { readData, readOne, createData, updateData, deleteData } = require('../co
  *       404:
  *         description: The app was not found
  */
-
-router
-    .get('/', readData)
-    .get('/:id', readOne)
-    .post('/', imageUpload.single('image'), createData)
-    .put('/:id', imageUpload.single('image'), updateData)
-    .delete('/:id', deleteData)
-
-
-module.exports = router;

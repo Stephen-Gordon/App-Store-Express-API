@@ -19,34 +19,37 @@ const readData = async (req, res) => {
     }
 };
 
- //https://www.mongodb.com/docs/manual/reference/operator/update/push/
+//https://www.mongodb.com/docs/manual/reference/operator/update/push/
 const createData = async (req, res) => {
     try {
+       
+        const inputData = req.body
+        const appId = req.body.app
 
-        const inputData = req.body;
-        const appId = req.body.app;
-        const userId = req.body.user;
+        // get the user from the request to prevent posting as another user
+        const userId = req.user._id
+
+        inputData.user = userId
 
         // check if the user and app exist in the db
         // https://www.educative.io/answers/what-is-exists-in-mongoose
-        const userExists = await User.exists({ _id: userId });
-        const appExists = await App.exists({ _id: appId });
+     
+        const appExists = await App.exists({ _id: appId })
 
         // if theres no user or app with the ids then return 404
-        if (!userExists || !appExists) {
-            res.status(404).json({ msg: "User or App not found" });
-            return;
+        if (!appExists) {
+            res.status(404).json({ msg: "App not found" })
+            return
         }
-
-        // if they exist then continue 
+      
 
         // create a new review
-        const review = await Review.create(inputData);
+        const review = await Review.create(inputData)
 
         //create a reference to the review in the user and app collections
         //use $push operator to add to an array
-        await User.findByIdAndUpdate(userId, { $push: { reviews: review._id } }, { new: true });
-        await App.findByIdAndUpdate(appId, { $push: { reviews: review._id } }, { new: true });
+        await User.findByIdAndUpdate(userId, { $push: { reviews: review._id } }, { new: true })
+        await App.findByIdAndUpdate(appId, { $push: { reviews: review._id } }, { new: true })
         
         res.status(201).json(review);
     } catch (err) {
@@ -64,25 +67,39 @@ const deleteData = async (req, res) => {
     
     const id = req.params.id;
 
-    // delete review from reviews collection
-    const deleteReview = await Review.findByIdAndDelete(id);
+    // get user id
+    const user = req.user
 
+    const reviewToDelete = await Review.findById(id)
     // check if review exists
-    !deleteReview ? res.status(404).json({ msg: `Review ${id} not found` }) :
-
-    // remove review reference from App and User collections
-    // https://stackoverflow.com/questions/54992810/update-many-in-mongoose
-    // updateMany(filter, update, options)
-    // filter must be an object
+    if (!reviewToDelete) {
+      res.status(404).json({ msg: `Review ${id} not found` })
+      return
+    }
     
-    await App.updateMany({reviews: id}, { $pull: { reviews: id } }, { new: true });
-    await User.updateMany({reviews: id} , { $pull: { reviews: id } }, { new: true });
 
+
+    if(reviewToDelete.user == user._id || user.role == 'admin'){
+      // delete review from reviews collection
+      deleteReview = await Review.findByIdAndDelete(id)
+
+
+      // remove review reference from App and User collections
+      // https://stackoverflow.com/questions/54992810/update-many-in-mongoose
+      // updateMany(filter, update, options)
+      // filter must be an object  
+      await App.updateMany({reviews: id}, { $pull: { reviews: id } }, { new: true })
+      await User.updateMany({reviews: id} , { $pull: { reviews: id } }, { new: true })
+      
+    } else {
+      res.status(401).json({ msg: `You are not authorized to delete this review` }) 
+    }
+   
     // return 200 if its deleted
     res.status(200).json({
       msg: `You deleted Review ${id}`
     });
-
+ 
   } catch (err) {
     //handle error
     if (err.name === 'CastError') {
