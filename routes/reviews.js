@@ -1,15 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-//Auth
-const { loginRequired } = require('../controllers/user.controller')
+//Middleware
+const { loginRequired } = require("../middleware/loginRequired");
+const { checkRole } = require("../middleware/checkRole");
+//import routes from the controller
+const {
+	readData,
+	createData,
+	deleteData,
+} = require("../controllers/review.controller");
 
+// must be logged in to use all routes
+// role check is done in the controller here
+router.use(loginRequired);
+router.get("/", readData).post("/", createData).delete("/:id", deleteData);
 
-//import your routes from the controller
-const { readData, createData, deleteData } = require('../controllers/review.controller')
+module.exports = router;
 
-//export them to the server
-
+// docs
 
 /**
  * @swagger
@@ -27,8 +36,8 @@ const { readData, createData, deleteData } = require('../controllers/review.cont
  *         rating:
  *           type: number
  *           description: Rating between 1-5
- * 
- * 
+ *
+ *
  *       example:
  *         content: I really like this App. It's been very useful
  *         rating: 4
@@ -72,7 +81,7 @@ const { readData, createData, deleteData } = require('../controllers/review.cont
  *               $ref: '#/components/schemas/Review'
  *       500:
  *         description: Some server error
- * 
+ *
  *   delete:
  *     summary: Remove the review by id
  *     tags: [Reviews]
@@ -90,12 +99,3 @@ const { readData, createData, deleteData } = require('../controllers/review.cont
  *       404:
  *         description: The review was not found
  */
-
-
-
-router
-    .get('/', readData)
-    .post('/', createData)
-    .delete('/:id', deleteData)
-    
-module.exports = router;

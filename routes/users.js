@@ -1,11 +1,26 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const { profile, register, login } = require('../controllers/user.controller')
+const {
+	profile,
+	register,
+	login,
+	deleteData,
+} = require("../controllers/user.controller");
+const { loginRequired } = require("../middleware/loginRequired");
 
 //import your routes from the controller
 //export them to the server
 
+router
+	.get("/:id", profile)
+	.post("/register", register)
+	.post("/login", login)
+	.delete("/:id", deleteData);
+
+module.exports = router;
+
+// docs
 /**
  * @swagger
  * components:
@@ -36,7 +51,7 @@ const { profile, register, login } = require('../controllers/user.controller')
  *           items:
  *             type: string
  *             description: Review ids
- * 
+ *
  *       example:
  *         full_name: Joe Bloggs
  *         email: bloggs@gmail.com
@@ -102,13 +117,5 @@ const { profile, register, login } = require('../controllers/user.controller')
  *         description: The user was deleted
  *       404:
  *         description: The user was not found
- * 
+ *
  */
-
-router
-    .get('/:id', profile)
-    .post('/register', register)
-    .post('/login', login)
-    
-
-module.exports = router;
