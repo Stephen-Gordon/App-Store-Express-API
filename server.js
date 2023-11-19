@@ -24,7 +24,7 @@ const options = {
 		info: {
 			title: "App Store Express / Mongo API",
 			version: "0.1.0",
-			description: "An App Store Api built with Express, Mongo",
+			description: "An App Store Api built with Express, Mongo, and Swagger",
 			license: {
 				name: "MIT",
 				url: "https://spdx.org/licenses/MIT.html",
@@ -37,7 +37,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "http://https://express-app-store-api-6f6c8ec32640.herokuapp.com/api",
+				url: "https://express-app-store-api-6f6c8ec32640.herokuapp.com/api/",
 			},
 		],
 		components: {
@@ -80,18 +80,15 @@ app.use((req, res, next) => {
 		// verify token is valid
 		jwt.verify(token[1], process.env.JWT_SECRET, (err, decoded) => {
 			if (err) {
-				// Handle invalid token (e.g., log error, send specific response)
-				// You may choose not to set req.user or handle it differently
-				console.error("Token verification failed:", err);
+				return console.error("Verification failed:", err);
 			} else {
-				// Token is valid, set req.user based on decoded information
+				// if token is valid set token to decoded information
 				req.user = decoded;
 			}
-			// Continue to the next middleware or route handler
+			// go to next middleware
 			next();
 		});
 	} else {
-		// No valid token provided, you may choose not to set req.user or handle it differently
 		req.user = undefined;
 		next();
 	}
