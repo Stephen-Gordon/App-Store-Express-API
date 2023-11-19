@@ -37,7 +37,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "http://localhost:3000/api",
+				url: "http://https://express-app-store-api-6f6c8ec32640.herokuapp.com/:3000/api",
 			},
 		],
 		components: {
