@@ -3,6 +3,18 @@ const User = require("../models/user.model");
 const Review = require("../models/review.model");
 const fs = require("fs");
 
+const deleteImage = (filename) => {
+	let path = `public/uploads/${filename}`;
+	fs.access(path, fs.constants.F_OK, (err) => {
+		err
+			? console.log(err)
+			: fs.unlink(path, (err) => {
+					if (err) throw err;
+					console.log(`${filename} was deleted`);
+			  });
+	});
+};
+
 const readData = async (req, res) => {
 	try {
 		const data = await App.find({})
@@ -85,38 +97,25 @@ const readOne = async (req, res) => {
 	}
 };
 
-const createData = (req, res) => {
-	inputData = req.body;
+const createData = async (req, res) => {
+	try {
+		const inputData = req.body;
 
-	// Check for image
-	console.log("file", req.file);
-	if (req.file) {
-		inputData.image_path = req.file.filename;
+		// Check for image
+		console.log("file", req.file);
+		if (req.file) {
+			inputData.image_path = req.file.filename;
+		}
+
+		const data = await App.create(inputData);
+
+		res.status(201).json(data);
+	} catch (err) {
+		console.log(err);
+		err.name == "ValidationError"
+			? res.status(422).json.error
+			: res.status(500).json;
 	}
-
-	App.create(inputData)
-		.then((data) => {
-			console.log(`New Fesival created`, data);
-			res.status(201).json(data);
-		})
-		.catch((err) => {
-			console.log(err);
-			err.name == "ValidationError"
-				? res.status(422).json.error
-				: res.status(500).json;
-		});
-};
-
-const deleteImage = (filename) => {
-	let path = `public/uploads/${filename}`;
-	fs.access(path, fs.constants.F_OK, (err) => {
-		err
-			? console.log(err)
-			: fs.unlink(path, (err) => {
-					if (err) throw err;
-					console.log(`${filename} was deleted`);
-			  });
-	});
 };
 
 const updateData = async (req, res) => {
@@ -179,9 +178,9 @@ const deleteData = async (req, res) => {
 		}
 
 		// Delete Image
-		deleteImage(deleteApp.image_path);
-
-		// if the app doesnt exist throw an error
+		if (deleteApp.image_path) {
+			deleteImage(deleteApp.image_path);
+		}
 
 		// map through the users and delete each review related to the app
 		const reviewsToDeleteArray = deleteApp.reviews;

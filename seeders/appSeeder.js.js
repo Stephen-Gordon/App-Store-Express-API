@@ -6,9 +6,7 @@ const User = require("../models/user.model");
 const mongoose = require("mongoose");
 const connectDB = async () => {
 	try {
-		await mongoose.connect(
-			"mongodb+srv://stephengordon48:ovgG7i6MBFXKMoHe@cluster0.lksxmbv.mongodb.net/appstore?retryWrites=true&w=majority"
-		);
+		await mongoose.connect(process.env.DB_ATLAS_URL);
 		console.log("connected to db");
 
 		// get all users

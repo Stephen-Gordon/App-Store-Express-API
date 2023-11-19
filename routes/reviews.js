@@ -3,7 +3,6 @@ const router = express.Router();
 
 //Middleware
 const { loginRequired } = require("../middleware/loginRequired");
-const { checkRole } = require("../middleware/checkRole");
 //import routes from the controller
 const {
 	readData,

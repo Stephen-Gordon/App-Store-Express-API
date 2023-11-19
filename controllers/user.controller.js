@@ -95,7 +95,7 @@ const deleteData = async (req, res) => {
 
 		// find them by id
 		const userToDelete = await User.findById(id);
-		console.log(userToDelete._id.toString(), user._id, user.role);
+
 		// check if they own the account or are they an admin
 		// check if they exist
 		if (!userToDelete) {

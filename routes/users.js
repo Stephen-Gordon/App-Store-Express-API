@@ -7,7 +7,6 @@ const {
 	login,
 	deleteData,
 } = require("../controllers/user.controller");
-const { loginRequired } = require("../middleware/loginRequired");
 
 //import your routes from the controller
 //export them to the server
