@@ -68,13 +68,28 @@ app.use(
 	swaggerUi.setup(specs, { explorer: true })
 );
 
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested, Content-Type, Accept Authorization"
+	);
+	if (req.method === "OPTIONS") {
+		res.header("Access-Control-Allow-Methods", "POST, PUT, PATCH, GET, DELETE");
+		return res.status(200).json({});
+	}
+	next();
+});
+
 //custom middleware
 app.use((req, res, next) => {
+	
 	let token = null;
 
 	if (req.headers.authorization) {
 		token = req.headers.authorization.split(" ");
 	}
+	
 
 	if (token && token[0] === "Bearer") {
 		// verify token is valid
