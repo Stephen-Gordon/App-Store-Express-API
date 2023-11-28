@@ -49,10 +49,12 @@ const login = async (req, res) => {
 
 		res.status(200).json({
 			msg: "Login successful",
-			token: token,
-			_id: user._id,
-			full_name: user.full_name,
-			email: user.email,
+			data: {
+				token: token,
+				_id: user._id,
+				full_name: user.full_name,
+				email: user.email,
+			},
 		});
 	} catch (err) {
 		return res.status(400).json({
