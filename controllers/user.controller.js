@@ -58,7 +58,10 @@ const login = async (req, res) => {
 		user.password = undefined;
 		res.status(200).json({
 			msg: "Login successful",
-			data: user,
+			data: {
+				user,
+				token
+			},
 		});
 	} catch (err) {
 		return res.status(400).json({
