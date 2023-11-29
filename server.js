@@ -11,10 +11,11 @@ const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 require("./configs/db.js")();
+const cors = require("cors");
 
 app.use(express.json());
 app.set("view engine", "html");
-
+app.use(cors()); 
 app.use(express.static(__dirname + "/views/"));
 app.use(express.static(__dirname + "/public/"));
 
