@@ -39,14 +39,13 @@ const login = async (req, res) => {
 		token = jwt.sign(
 			{
 				email: user.email,
-				full_name: user.full_name,
 				role: user.role,
 				_id: user._id,
-				//role
 			},
 			process.env.JWT_SECRET
 		);
 		user.token = token;
+		user.password = undefined;
 		res.status(200).json({
 			msg: "Login successful",
 			data: user,
