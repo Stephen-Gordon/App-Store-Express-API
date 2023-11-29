@@ -12,9 +12,19 @@ const register = async (req, res) => {
 		// save the user
 		const user = await newUser.save();
 		user.password = undefined;
-		//return the user without the password
+		// create JWT token
+		const token = jwt.sign(
+			{
+				email: user.email,
+				role: user.role,
+				_id: user._id,
+			},
+			process.env.JWT_SECRET
+		);
+		// return the user with the token
 		return res.status(201).json({
 			data: user,
+			token: token,
 		});
 	} catch (err) {
 		return res.status(400).json({
@@ -26,7 +36,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
 	try {
 		// find by email
-		const user = await User.findOne({ email: req.body.email });
+		let user = await User.findOne({ email: req.body.email });
 
 		let token = null;
 
