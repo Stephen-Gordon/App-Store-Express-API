@@ -6,6 +6,7 @@ const { loginRequired } = require("../middleware/loginRequired");
 //import routes from the controller
 const {
 	readData,
+	getAppReviews,
 	createData,
 	deleteData,
 } = require("../controllers/review.controller");
@@ -13,7 +14,11 @@ const {
 // must be logged in to use all routes
 // role check is done in the controller here
 router.use(loginRequired);
-router.get("/", readData).post("/", createData).delete("/:id", deleteData);
+router
+	.get("/", readData)
+	.get("/:id", getAppReviews)
+	.post("/", createData)
+	.delete("/:id", deleteData);
 
 module.exports = router;
 
