@@ -21,13 +21,22 @@ const register = async (req, res) => {
 			},
 			process.env.JWT_SECRET
 		);
-		// return the user with the token
-		return res.status(201).json({
+		user.token = token;
+		res.status(201).json({
+			msg: "User created",
 			data: {
 				user,
 				token,
 			},
 		});
+
+		/* // return the user with the token
+		return res.status(201).json({
+			data: {
+				user,
+				token,
+			},
+		}); */
 	} catch (err) {
 		return res.status(400).json({
 			msg: err,
