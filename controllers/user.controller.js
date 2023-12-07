@@ -13,7 +13,7 @@ const register = async (req, res) => {
 		const user = await newUser.save();
 		user.password = undefined;
 		// create JWT token
-		const token = jwt.sign(
+		let token = jwt.sign(
 			{
 				email: user.email,
 				role: user.role,
@@ -22,21 +22,11 @@ const register = async (req, res) => {
 			process.env.JWT_SECRET
 		);
 		user.token = token;
-		res.status(201).json({
-			msg: "User created",
-			data: {
-				user,
-				token,
-			},
-		});
-
-		/* // return the user with the token
+		console.log(user).token;
+		// return the user with the token
 		return res.status(201).json({
-			data: {
-				user,
-				token,
-			},
-		}); */
+			data: user
+		});
 	} catch (err) {
 		return res.status(400).json({
 			msg: err,
