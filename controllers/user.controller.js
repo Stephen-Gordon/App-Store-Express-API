@@ -2,7 +2,6 @@ const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Review = require("../models/review.model");
-
 const register = async (req, res) => {
 	try {
 		// create new user
@@ -21,15 +20,20 @@ const register = async (req, res) => {
 			},
 			process.env.JWT_SECRET
 		);
+		// Assign the token to the user object
 		user.token = token;
-		console.log(user)
-		// return the user with the token
+		console.log(user);
+		// return the user with the token in the "data" object
 		return res.status(201).json({
-			data: user
+			msg: "User created",
+			data: {
+				user,
+				token,
+			},
 		});
 	} catch (err) {
 		return res.status(400).json({
-			msg: err,
+			msg: err.message || "An error occurred during user registration.",
 		});
 	}
 };
