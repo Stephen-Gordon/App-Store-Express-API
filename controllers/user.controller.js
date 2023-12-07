@@ -23,8 +23,10 @@ const register = async (req, res) => {
 		);
 		// return the user with the token
 		return res.status(201).json({
-			data: user,
-			token: token,
+			data: {
+				user,
+				token,
+			},
 		});
 	} catch (err) {
 		return res.status(400).json({
