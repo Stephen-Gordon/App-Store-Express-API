@@ -22,7 +22,7 @@ const register = async (req, res) => {
 			process.env.JWT_SECRET
 		);
 		user.token = token;
-		console.log(user).token;
+		console.log(user)
 		// return the user with the token
 		return res.status(201).json({
 			data: user
