@@ -25,13 +25,7 @@ const getAppReviews = async (req, res) => {
   
         const appId = req.params.id
   
-        const data = await Review.find({app: appId})
-        
-
-        for (let i = 0; i < data.length; i++) {
-          const user = await User.findOne({_id: data[i].user});
-          data[i].full_name = user.full_name;
-        }
+        const data = await Review.find({app: appId}).populate('user', 'full_name email _id role')
   
         data ? res.status(200).json(data) 
         :
