@@ -11,12 +11,12 @@ const {
 	deleteData,
 } = require("../controllers/review.controller");
 
+router.get("/:id", getAppReviews);
 // must be logged in to use all routes
 // role check is done in the controller here
 router.use(loginRequired);
 router
 	.get("/", readData)
-	.get("/:id", getAppReviews)
 	.post("/", createData)
 	.delete("/:id", deleteData);
 
