@@ -29,7 +29,7 @@ const getAppReviews = async (req, res) => {
         
 
         for (let i = 0; i < data.length; i++) {
-          const user = await User.find({_id: data[i].user});
+          const user = await User.findOne({_id: data[i].user});
           data[i].full_name = user.full_name;
         }
   
