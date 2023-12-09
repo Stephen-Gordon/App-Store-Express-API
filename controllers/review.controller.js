@@ -21,21 +21,26 @@ const readData = async (req, res) => {
 
 const getAppReviews = async (req, res) => {
   
-      try {
-  
-        const appId = req.params.id
-  
-        const data = await Review.find({app: appId})
-  
-        data ? res.status(200).json(data) 
-        :
-        res.status(404).json('No Reviews found') 
-  
-      } catch (err) {
-          console.error(`Error ${err}`)
-          res.status(500).json(err)
-      }
-  
+  try {
+
+    const appId = req.params.id
+
+    const data = await Review.find({app: appId})
+
+    for (const review of data) {
+      const user = await User.findById(review.user)
+      review.userName = user
+    }
+
+    data ? res.status(200).json(data) 
+    :
+    res.status(404).json('No Reviews found') 
+
+  } catch (err) {
+      console.error(`Error ${err}`)
+      res.status(500).json(err)
+  }
+
 }
 
 //https://www.mongodb.com/docs/manual/reference/operator/update/push/
