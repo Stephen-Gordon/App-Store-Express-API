@@ -104,10 +104,13 @@ const createData = async (req, res) => {
 		// Check for image
 		console.log("file", req.file);
 		if (req.file) {
-			inputData.image_path = process.env.STORAGE_ENGINE == "s3" ? req.file.key : req.file.filename;
+			
+			inputData.image_path = req.file.key;
+			console.log("inputData.image_path", inputData.image_path)
 		}
 
 		const data = await App.create(inputData);
+		console.log(data.image_path)
 
 		res.status(201).json(data);
 	} catch (err) {
