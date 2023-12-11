@@ -20,6 +20,9 @@ const appSchema = new mongoose.Schema({
     cont_rating: {
         type: String,
     },
+    description: {
+        type: String
+    },
     genre: {
         type: String
     },
