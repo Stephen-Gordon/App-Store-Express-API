@@ -23,6 +23,7 @@ if (process.env.STORAGE_ENGINE == "S3") {
 			cb(null, { fieldName: file.fieldname });
 		},
 		key: function (req, file, cb) {
+			console.log("multer file", file);
 			cb(null, Date.now() + path.extname(file.originalname));
 		},
 	});
