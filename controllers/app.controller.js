@@ -100,9 +100,8 @@ const readOne = async (req, res) => {
 const createData = async (req, res) => {
 	try {
 		const inputData = req.body;
-
-		// Check for image
-		console.log("file", req.file);
+		console.log("req.body:", req.body);
+		console.log("req.file:", req.file);
 		if (req.file) {
 			
 			inputData.image_path = req.file.key;
