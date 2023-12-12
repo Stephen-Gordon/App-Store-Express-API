@@ -87,8 +87,8 @@ const readOne = async (req, res) => {
 		!data
 			? res.status(404).json({ msg: `app ${id} not found` })
 			: res.status(200).json(data);
-	} catch (err) {
-		//Check for cast Error
+		} catch (err) {
+			//Check for cast Error
 		err.name == "CastError"
 			? res.status(404).json({ msg: `App ${id} not found` })
 			: res.status(500).json(err);
@@ -102,9 +102,10 @@ const createData = async (req, res) => {
 		const inputData = req.body;
 		console.log("req.body:", req.body);
 		console.log("req.file:", req.file);
+		  console.log("req.headers:", req.headers);
 		if (req.file) {
 			
-			inputData.image_path = req.file.key;
+			inputData.image_path = req.file.key;	
 			console.log("inputData.image_path", inputData.image_path)
 		}
 
