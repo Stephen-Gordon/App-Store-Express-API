@@ -103,7 +103,6 @@ const createData = async (req, res) => {
 		const inputData = req.body;
 		console.log("req.body:", req.body);
 		console.log("req.file:", req.file);
-		  console.log("req:", req);
 		if (req.file) {
 			
 			inputData.image_path = req.file.key;	
