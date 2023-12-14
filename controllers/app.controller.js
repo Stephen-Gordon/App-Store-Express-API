@@ -132,7 +132,7 @@ const updateData = async (req, res) => {
 
 		// check if theres a new image
 		if (req.file) {
-			data.image_path = req.file.filename;
+			data.image_path = req.file.key;
 
 			// get the old app
 			const oldData = await App.findById(id);
