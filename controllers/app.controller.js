@@ -2,9 +2,8 @@ const App = require("../models/app.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
 const fs = require("fs");
-const { S3Client } = require("@aws-sdk/client-s3");
-
-const deleteImage = (filename) => {
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const deleteImage = async (filename) => {
 	const s3 = new S3Client({
 		region: process.env.MY_AWS_REGION,
 		credentials: {
@@ -17,13 +16,12 @@ const deleteImage = (filename) => {
 		Key: filename,
 	}
 	console.log("params", params)
-	s3.deleteObject(params, (err, data) => {
-		if (err) {
-			console.log("Error deleting image", err);
-		} else {
-			console.log("Successfully deleted image", data);
-		}
-	});
+	try {
+		const data = await s3.send(new DeleteObjectCommand(params));
+		console.log("Successfully deleted image", data);
+	} catch (err) {
+		console.log("Error deleting image", err);
+	}
 	
 };
 
