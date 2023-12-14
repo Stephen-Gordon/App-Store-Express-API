@@ -2,14 +2,21 @@ const App = require("../models/app.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
 const fs = require("fs");
-const { S3 } = require("@aws-sdk/client-s3");
+const { S3Client } = require("@aws-sdk/client-s3");
 
 const deleteImage = (filename) => {
+	const s3 = new S3Client({
+		region: process.env.MY_AWS_REGION,
+		credentials: {
+			accessKeyId: process.env.MY_AWS_ACCESS_KEY_ID,
+			secretAccessKey: process.env.MY_AWS_SECRET_ACCESS_KEY,
+		},
+	});
 	const params = {
 		Bucket: process.env.MY_AWS_BUCKET_NAME,
 		Key: filename,
 	}
-	S3.deleteObject(params, (err, data) => {
+	s3.deleteObject(params, (err, data) => {
 		if (err) {
 			console.log("Error deleting image", err);
 		} else {
