@@ -2,17 +2,21 @@ const App = require("../models/app.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
 const fs = require("fs");
+const { S3 } = require("@aws-sdk/client-s3");
 
 const deleteImage = (filename) => {
-	let path = `public/uploads/${filename}`;
-	fs.access(path, fs.constants.F_OK, (err) => {
-		err
-			? console.log(err)
-			: fs.unlink(path, (err) => {
-					if (err) throw err;
-					console.log(`${filename} was deleted`);
-			  });
+	const params = {
+		Bucket: process.env.MY_AWS_BUCKET_NAME,
+		Key: filename,
+	}
+	S3.deleteObject(params, (err, data) => {
+		if (err) {
+			console.log("Error deleting image", err);
+		} else {
+			console.log("Successfully deleted image", data);
+		}
 	});
+	
 };
 
 const readData = async (req, res) => {
