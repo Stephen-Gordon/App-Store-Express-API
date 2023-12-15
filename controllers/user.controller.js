@@ -77,8 +77,8 @@ const profile = async (req, res) => {
 		// get a user by id
 		// populate it with selected properties
 		const data = await User.findById(id)
-			.populate({ path: "appsDownloaded", select: "_id name" })
-			.populate({ path: "reviews", select: "_id content" });
+			.populate({ path: "appsDownloaded", select: "_id name genre image_path" })
+			.populate({ path: "reviews", select: "_id content app" });
 
 		if (!data) {
 			return res.status(404).json({ msg: `user ${id} not found` });
