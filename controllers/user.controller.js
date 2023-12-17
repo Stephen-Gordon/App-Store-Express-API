@@ -80,7 +80,7 @@ const profile = async (req, res) => {
 			.populate({ path: "appsDownloaded", select: "_id name genre image_path" })
 			.populate({
 				path: "reviews",
-				select: "_id content app",
+				select: "_id content rating app",
 				populate: {
 					path: "app",
 					select: "_id name genre image_path",
